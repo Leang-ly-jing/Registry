@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['"Instrument Serif"', 'serif'],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-sans antialiased bg-stone-50 text-neutral-900">
+
+<main class="min-h-screen w-full flex">
+
+    <!-- Left: brand panel -->
+    <section class="hidden lg:flex relative w-1/2 bg-neutral-950 text-stone-100 flex-col justify-between p-12 overflow-hidden">
+        <!-- soft gradient glow -->
+        <div class="absolute -top-32 -left-32 h-[28rem] w-[28rem] rounded-full bg-orange-500/30 blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 h-[22rem] w-[22rem] rounded-full bg-amber-200/10 blur-3xl"></div>
+
+        <div class="relative flex items-center gap-2">
+            <span class="h-3 w-3 rounded-full bg-orange-500"></span>
+            <span class="text-sm tracking-[0.2em] uppercase text-stone-400">Studio</span>
+        </div>
+
+        <div class="relative">
+            <h1 class="font-serif text-7xl xl:text-8xl leading-[0.95] tracking-tight">
+                Welcome<br>
+                <span class="italic text-orange-400">back.</span>
+            </h1>
+            <p class="mt-6 max-w-sm text-stone-400 leading-relaxed">
+                Sign in to pick up right where you left off.
+            </p>
+        </div>
+
+        <div class="relative flex justify-between text-xs text-stone-500">
+            <span>&copy; 2026</span>
+            <span>Secure sign-in</span>
+        </div>
+    </section>
+
+    <!-- Right: form -->
+    <section class="flex w-full lg:w-1/2 items-center justify-center px-6 py-12">
+        <div class="w-full max-w-sm">
+
+            <div class="mb-10">
+                <h2 class="text-3xl font-semibold tracking-tight">Sign in</h2>
+                <p class="mt-2 text-sm text-neutral-500">Enter your details to continue.</p>
+            </div>
+
+            <!-- Spring Security messages -->
+            <div th:if="${param.error}" class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                Invalid username or password.
+            </div>
+            <div th:if="${param.logout}" class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                You have been signed out.
+            </div>
+
+            <form action="/login" method="post" class="space-y-5">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="space-y-2">
+                    <label for="username" class="block text-sm font-medium text-neutral-700">Username</label>
+                    <input type="text" id="username" name="username" autocomplete="username" required
+                           placeholder="your username"
+                           class="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm placeholder:text-neutral-400 outline-none transition focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-neutral-700">Password</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required
+                           placeholder="••••••••"
+                           class="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm placeholder:text-neutral-400 outline-none transition focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5">
+                </div>
+
+                <button type="submit"
+                        class="group w-full flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800 active:scale-[0.99]">
+                    Login
+                    <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="my-8 flex items-center gap-4">
+                <span class="h-px flex-1 bg-neutral-200"></span>
+                <span class="text-xs uppercase tracking-widest text-neutral-400">or</span>
+                <span class="h-px flex-1 bg-neutral-200"></span>
+            </div>
+
+            <!-- OAuth -->
+            <div class="grid grid-cols-2 gap-3">
+                <a href="/oauth2/authorization/github"
+                   class="flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-medium transition hover:border-neutral-300 hover:bg-neutral-50">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
+                    </svg>
+                    GitHub
+                </a>
+                <a href="/oauth2/authorization/google"
+                   class="flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-medium transition hover:border-neutral-300 hover:bg-neutral-50">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="#4285F4" d="M23.5 12.27c0-.82-.07-1.6-.2-2.36H12v4.47h6.46a5.52 5.52 0 0 1-2.4 3.62v3h3.88c2.27-2.09 3.56-5.17 3.56-8.73Z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.91l-3.88-3c-1.07.72-2.45 1.15-4.06 1.15-3.12 0-5.77-2.11-6.71-4.95H1.28v3.1A12 12 0 0 0 12 24Z"/>
+                        <path fill="#FBBC05" d="M5.29 14.29a7.2 7.2 0 0 1 0-4.58v-3.1H1.28a12 12 0 0 0 0 10.78l4.01-3.1Z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.61 4.59 1.8l3.44-3.44A11.5 11.5 0 0 0 12 0 12 12 0 0 0 1.28 6.61l4.01 3.1C6.23 6.86 8.88 4.75 12 4.75Z"/>
+                    </svg>
+                    Google
+                </a>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

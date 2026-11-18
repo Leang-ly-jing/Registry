@@ -1,0 +1,20 @@
+server:
+  port: 9090
+  forward-headers-strategy: framework
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:39000
+  application:
+    name: business-service
+  profiles:
+    active: dev
+  cloud:
+    consul:
+      discovery:
+        health-check-url: http://host.docker.internal:${server.port}/actuator/health
+        prefer-ip-address: true
+        service-name: ${spring.application.name}
+        instance-id: ${spring.application.name}-${random.value}

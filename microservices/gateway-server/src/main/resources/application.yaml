@@ -1,0 +1,90 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: gateway-server
+  profiles:
+    active: dev
+  cloud:
+    consul:
+      discovery:
+        health-check-url: http://host.docker.internal:${server.port}/actuator/health
+        prefer-ip-address: true
+        service-name: ${spring.application.name}
+        instance-id: ${spring.application.name}-${random.value}
+    gateway:
+      server:
+        webflux:
+          default-filters:
+            - SaveSession
+            - TokenRelay=
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: my-order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/my-orders/**
+              filters:
+                - RewritePath=/my-orders/?(?<segment>.*), /$\{segment}
+            - id: json-placeholder
+              uri: https://jsonplaceholder.typicode.com
+              predicates:
+                - Path=/jph/**
+              filters:
+                - RewritePath=/jph/?(?<segment>.*), /$\{segment}
+          trusted-proxies: ".*"
+  #            - id: nextjs
+#              uri: http://localhost:3000
+#              order: 1000
+#              predicates:
+#                - Path=/**
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:39000
+      client:
+        provider:
+          iam-service:
+            issuer-uri: http://localhost:39000
+        registration:
+          front-bff-client:
+            provider: iam-service
+            client-id: front-bff-client
+            client-secret: front-bff-secret
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/front-bff-client"
+            scope: openid,profile
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health, gateway"
+  endpoint:
+    gateway:
+      access: read_only
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Order Service
+        url: /order-service/v3/api-docs
+      - name: Business Service
+        url: /business-service/v3/api-docs
+    enabled: true
+  api-docs:
+    enabled: true
+scalar:
+  sources:
+    - title: Order Service
+      url: /order-service/v3/api-docs
+    - title: Business Service
+      url: /business-service/v3/api-docs
+  enabled: true
+
+

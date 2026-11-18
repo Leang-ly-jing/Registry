@@ -1,0 +1,27 @@
+plugins {
+    id 'java-common-conventions'
+    id 'maven-publish'
+}
+
+version= "1.0.2"
+
+dependencies {
+
+}
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Leang-ly-jing/Registry")
+            credentials {
+                username = providers.gradleProperty("gpr.user").getOrNull() ?: System.getenv("USERNAME")
+                password = providers.gradleProperty("gpr.key").getOrNull() ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+}

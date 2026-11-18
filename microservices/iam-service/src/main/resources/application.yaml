@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: iam-service
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            provider: github
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            client-name: GitHub
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          google:
+            provider: google
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-name: Google
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+
+        provider:
+          google:
+          github:
+
+      authorizationserver:
+        issuer: http://localhost:39000
+  datasource:
+    url: ${URL}
+    username: ${USERNAME}
+    password: ${qwerqwer}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  liquibase:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    driver-class-name: ${spring.datasource.driver-class-name}
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+server:
+  port: 39000
+
+logging:
+  level:
+    org.springframework.security: TRACE
